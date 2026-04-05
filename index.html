@@ -3,57 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة العقارات السحابي</title>
+    <title>نظام إدارة العقارات السحابي المتكامل</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: #f1f5f9; }
-        .sidebar { width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); position: fixed; height: 100vh; overflow-y: auto; z-index: 100; box-shadow: 2px 0 10px rgba(0,0,0,0.1); transition: 0.3s; }
-        .logo { padding: 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; }
+        body { background: #f1f5f9; color: #1e293b; }
+        .sidebar { width: 280px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); position: fixed; height: 100vh; overflow-y: auto; z-index: 100; box-shadow: 2px 0 10px rgba(0,0,0,0.1); }
+        .logo { padding: 1.5rem; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 12px; color: white; }
         .logo i { font-size: 2rem; color: #3b82f6; }
-        .logo h2 { font-size: 1.3rem; color: white; }
         .nav-item { padding: 0.8rem 1.5rem; display: flex; align-items: center; gap: 12px; cursor: pointer; color: #cbd5e1; transition: 0.2s; }
         .nav-item:hover { background: #334155; color: white; }
         .nav-item.active { background: #3b82f6; color: white; border-radius: 0 20px 20px 0; }
         .main-content { margin-right: 280px; padding: 1.5rem; min-height: 100vh; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; margin-bottom: 1.5rem; }
         .stat-card { background: white; border-radius: 20px; padding: 1.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .stat-value { font-size: 1.6rem; font-weight: 800; margin-top: 0.5rem; }
+        .stat-value { font-size: 1.5rem; font-weight: 800; margin-top: 0.5rem; }
         .section-card { background: white; border-radius: 20px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .btn { padding: 0.5rem 1rem; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background: #3b82f6; color: white; }
         .btn-danger { background: #ef4444; color: white; }
         table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
         th, td { padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; }
-        th { background: #f8fafc; }
+        th { background: #f8fafc; font-weight: 700; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
         .modal-content { background: white; padding: 2rem; border-radius: 28px; width: 90%; max-width: 500px; }
         input, select { width: 100%; padding: 0.7rem; margin: 0.5rem 0; border: 1px solid #cbd5e1; border-radius: 14px; }
         .page { display: none; }
         .page.active-page { display: block; }
-        .badge { padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; }
+        .badge { padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
         .badge-success { background: #d1fae5; color: #10b981; }
-        @media (max-width: 768px) { .sidebar { transform: translateX(100%); } .main-content { margin-right: 0; } }
+        .badge-warning { background: #fed7aa; color: #f97316; }
+        .badge-info { background: #dbeafe; color: #3b82f6; }
     </style>
 </head>
 <body>
 
 <div class="sidebar" id="sidebar">
-    <div class="logo"><i class="fas fa-building"></i><h2>نظام العقارات</h2></div>
+    <div class="logo"><i class="fas fa-building"></i><h2>إدارة العقارات</h2></div>
     <div class="nav-item active" data-page="dashboard"><i class="fas fa-chart-line"></i><span>الرئيسية</span></div>
     <div class="nav-item" data-page="lands"><i class="fas fa-map-marker-alt"></i><span>الأراضي</span></div>
-    <div class="nav-item" data-page="revenues"><i class="fas fa-file-invoice-dollar"></i><span>الفواتير والإيرادات</span></div>
+    <div class="nav-item" data-page="projects"><i class="fas fa-hard-hat"></i><span>المشاريع</span></div>
+    <div class="nav-item" data-page="internalUnits"><i class="fas fa-building"></i><span>مبيعات داخلية</span></div>
+    <div class="nav-item" data-page="externalUnits"><i class="fas fa-home"></i><span>مبيعات خارجية</span></div>
+    <div class="nav-item" data-page="marketers"><i class="fas fa-users"></i><span>المسوقين</span></div>
+    <div class="nav-item" data-page="expenses"><i class="fas fa-money-bill-wave"></i><span>المصروفات</span></div>
+    <div class="nav-item" data-page="revenues"><i class="fas fa-chart-simple"></i><span>الإيرادات</span></div>
 </div>
 
 <div class="main-content">
-    <div id="dashboardPage" class="page active-page">
-        <div class="stats-grid" id="statsGrid"></div>
-        <div class="section-card"><h3>آخر العمليات السحابية</h3><div id="recentActivity"></div></div>
-    </div>
+    <div id="dashboardPage" class="page active-page"></div>
     <div id="landsPage" class="page"></div>
+    <div id="projectsPage" class="page"></div>
+    <div id="internalUnitsPage" class="page"></div>
+    <div id="externalUnitsPage" class="page"></div>
+    <div id="marketersPage" class="page"></div>
+    <div id="expensesPage" class="page"></div>
     <div id="revenuesPage" class="page"></div>
 </div>
 
@@ -63,92 +70,124 @@
     const S_KEY = 'sb_publishable_hWSjQL7lQIv-8rVhfRXzig_ci3SVn52';
     const sbClient = supabase.createClient(S_URL, S_KEY);
 
-    let lands = [], revenues = [];
+    let dataStore = { lands:[], projects:[], internalUnits:[], externalUnits:[], marketers:[], expenses:[], revenues:[] };
 
-    // --- جلب البيانات ---
-    async function loadData() {
-        const { data: lData } = await sbClient.from('lands').select('*').order('created_at', { ascending: false });
-        const { data: rData } = await sbClient.from('revenues').select('*').order('created_at', { ascending: false });
-        lands = lData || [];
-        revenues = rData || [];
-        renderDashboard();
-    }
-
-    // --- لوحة التحكم ---
-    function renderDashboard() {
-        const totalRev = revenues.reduce((s, r) => s + Number(r.amount), 0);
-        document.getElementById('statsGrid').innerHTML = `
-            <div class="stat-card"><div>إجمالي الأراضي</div><div class="stat-value">${lands.length}</div></div>
-            <div class="stat-card"><div>إجمالي الإيرادات</div><div class="stat-value" style="color:green">${totalRev.toLocaleString()} ر.س</div></div>
-        `;
-    }
-
-    // --- صفحة الأراضي ---
-    async function renderLands() {
-        let html = `<div class="section-card"><div style="display:flex; justify-content:space-between"><h2>إدارة الأراضي</h2><button class="btn btn-primary" onclick="addLandForm()">+ إضافة أرض</button></div>
-        <table><thead><tr><th>الاسم</th><th>الموقع</th><th>السعر</th><th>الإجراءات</th></tr></thead><tbody>`;
-        lands.forEach(l => {
-            html += `<tr><td>${l.name}</td><td>${l.location}</td><td>${Number(l.price).toLocaleString()}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="deleteItem('lands', '${l.id}')">حذف</button></td></tr>`;
-        });
-        document.getElementById('landsPage').innerHTML = html + `</tbody></table></div>`;
-    }
-
-    // --- صفحة الإيرادات/الفواتير ---
-    async function renderRevenues() {
-        let html = `<div class="section-card"><div style="display:flex; justify-content:space-between"><h2>الفواتير والإيرادات</h2><button class="btn btn-primary" onclick="addRevForm()">+ إضافة فاتورة</button></div>
-        <table><thead><tr><th>الوصف</th><th>المبلغ</th><th>التاريخ</th><th>الإجراءات</th></tr></thead><tbody>`;
-        revenues.forEach(r => {
-            html += `<tr><td>${r.description}</td><td>${Number(r.amount).toLocaleString()}</td><td>${r.date}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="deleteItem('revenues', '${r.id}')">حذف</button></td></tr>`;
-        });
-        document.getElementById('revenuesPage').innerHTML = html + `</tbody></table></div>`;
-    }
-
-    // --- العمليات السحابية ---
-    async function deleteItem(table, id) {
-        if(!confirm("هل أنت متأكد من الحذف من السحاب؟")) return;
-        const { error } = await sbClient.from(table).delete().eq('id', id);
-        if(!error) { await loadData(); refreshCurrentPage(); }
-    }
-
-    function addLandForm() {
-        showModal('إضافة أرض جديدة', `<input id="n" placeholder="اسم الأرض"><input id="l" placeholder="الموقع"><input id="p" type="number" placeholder="السعر">`, async (f) => {
-            await sbClient.from('lands').insert([{ name: f.n.value, location: f.l.value, price: f.p.value }]);
-            await loadData(); renderLands();
-        });
-    }
-
-    function addRevForm() {
-        showModal('إضافة فاتورة', `<input id="d" placeholder="الوصف"><input id="a" type="number" placeholder="المبلغ"><input id="dt" type="date">`, async (f) => {
-            await sbClient.from('revenues').insert([{ description: f.d.value, amount: f.a.value, date: f.dt.value }]);
-            await loadData(); renderRevenues();
-        });
-    }
-
-    // --- المساعدة ---
-    function showPage(p) {
-        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active-page'));
-        document.getElementById(p + 'Page').classList.add('active-page');
-        if(p === 'lands') renderLands();
-        if(p === 'revenues') renderRevenues();
-    }
-
-    function refreshCurrentPage() {
+    // --- جلب البيانات الشامل ---
+    async function refreshData() {
+        const fetchArr = [
+            sbClient.from('lands').select('*'),
+            sbClient.from('projects').select('*'),
+            sbClient.from('internal_units').select('*'),
+            sbClient.from('external_units').select('*'),
+            sbClient.from('marketers').select('*'),
+            sbClient.from('expenses').select('*'),
+            sbClient.from('revenues').select('*')
+        ];
+        const results = await Promise.all(fetchArr);
+        dataStore.lands = results[0].data || [];
+        dataStore.projects = results[1].data || [];
+        dataStore.internalUnits = results[2].data || [];
+        dataStore.externalUnits = results[3].data || [];
+        dataStore.marketers = results[4].data || [];
+        dataStore.expenses = results[5].data || [];
+        dataStore.revenues = results[6].data || [];
+        
         const active = document.querySelector('.page.active-page').id.replace('Page', '');
-        showPage(active);
+        renderPage(active);
+    }
+
+    // --- محرك عرض الصفحات ---
+    function renderPage(page) {
+        if(page === 'dashboard') renderDashboard();
+        else if(page === 'lands') renderTablePage('lands', 'الأراضي', ['الاسم', 'الموقع', 'المساحة', 'السعر'], ['name', 'location', 'area', 'price']);
+        else if(page === 'projects') renderTablePage('projects', 'المشاريع', ['اسم المشروع', 'الموقع', 'تاريخ البدء', 'الحالة'], ['name', 'location', 'startDate', 'status']);
+        else if(page === 'internalUnits') renderTablePage('internal_units', 'المبيعات الداخلية', ['المشروع', 'رقم الوحدة', 'السعر', 'الحالة'], ['projectName', 'unitNumber', 'price', 'status']);
+        else if(page === 'externalUnits') renderTablePage('external_units', 'المبيعات الخارجية', ['العنوان', 'الغرف', 'السعر', 'الحالة'], ['address', 'rooms', 'price', 'status']);
+        else if(page === 'marketers') renderTablePage('marketers', 'المسوقين', ['الاسم', 'الهاتف', 'العمولة', 'المبيعات'], ['name', 'phone', 'commission', 'salesCount']);
+        else if(page === 'expenses') renderTablePage('expenses', 'المصروفات', ['الوصف', 'المبلغ', 'التاريخ', 'التصنيف'], ['description', 'amount', 'date', 'category']);
+        else if(page === 'revenues') renderTablePage('revenues', 'الإيرادات', ['الوصف', 'المبلغ', 'التاريخ', 'المصدر'], ['description', 'amount', 'date', 'source']);
+    }
+
+    // --- لوحة التحكم السحابية ---
+    function renderDashboard() {
+        const totalRev = dataStore.revenues.reduce((s, r) => s + Number(r.amount), 0);
+        const totalExp = dataStore.expenses.reduce((s, e) => s + Number(e.amount), 0);
+        const html = `
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-value">${dataStore.lands.length}</div><div>إجمالي الأراضي</div></div>
+                <div class="stat-card"><div class="stat-value">${dataStore.projects.length}</div><div>المشاريع القائمة</div></div>
+                <div class="stat-card"><div class="stat-value" style="color:green">${totalRev.toLocaleString()} ر.س</div><div>إجمالي الإيرادات</div></div>
+                <div class="stat-card"><div class="stat-value" style="color:red">${totalExp.toLocaleString()} ر.س</div><div>المصروفات</div></div>
+            </div>
+            <div class="section-card"><h3>آخر العمليات</h3><table><thead><tr><th>النوع</th><th>الوصف</th><th>المبلغ</th></tr></thead><tbody>
+            ${dataStore.revenues.slice(0,3).map(r => `<tr><td><span class="badge badge-success">إيراد</span></td><td>${r.description}</td><td>${r.amount}</td></tr>`).join('')}
+            ${dataStore.expenses.slice(0,3).map(e => `<tr><td><span class="badge badge-warning">مصروف</span></td><td>${e.description}</td><td>${e.amount}</td></tr>`).join('')}
+            </tbody></table></div>`;
+        document.getElementById('dashboardPage').innerHTML = html;
+    }
+
+    // --- منشئ الجداول الديناميكي ---
+    function renderTablePage(tableKey, title, headers, fields) {
+        const key = tableKey.includes('_') ? tableKey.replace(/_([a-z])/g, (m, c) => c.toUpperCase()) : tableKey;
+        const data = dataStore[key === 'internalUnits' ? 'internalUnits' : key === 'externalUnits' ? 'externalUnits' : key] || [];
+        
+        let html = `<div class="section-card"><div style="display:flex; justify-content:space-between"><h2>${title}</h2><button class="btn btn-primary" onclick="openAddModal('${tableKey}')">+ إضافة جديد</button></div>
+        <table><thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}<th>الإجراءات</th></tr></thead><tbody>`;
+        
+        data.forEach(item => {
+            html += `<tr>${fields.map(f => `<td>${item[f] || '-'}</td>`).join('')}
+            <td><button class="btn btn-danger btn-sm" onclick="cloudAction('delete', '${tableKey}', '${item.id}')">حذف</button></td></tr>`;
+        });
+        document.getElementById(key + 'Page').innerHTML = html + `</tbody></table></div>`;
+    }
+
+    // --- العمليات السحابية (إضافة وحذف) ---
+    async function cloudAction(action, table, idOrData) {
+        if(action === 'delete') {
+            if(!confirm("حذف السجل من السحاب؟")) return;
+            await sbClient.from(table).delete().eq('id', idOrData);
+        } else {
+            await sbClient.from(table).insert([idOrData]);
+        }
+        refreshData();
+    }
+
+    // --- نموذج الإضافة الديناميكي ---
+    function openAddModal(table) {
+        let fieldsHtml = "";
+        if(table === 'lands') fieldsHtml = `<input id="name" placeholder="الاسم"><input id="location" placeholder="الموقع"><input id="area" placeholder="المساحة"><input id="price" type="number" placeholder="السعر">`;
+        else if(table === 'revenues') fieldsHtml = `<input id="description" placeholder="الوصف"><input id="amount" type="number" placeholder="المبلغ"><input id="date" type="date"><input id="source" placeholder="المصدر">`;
+        else if(table === 'expenses') fieldsHtml = `<input id="description" placeholder="الوصف"><input id="amount" type="number" placeholder="المبلغ"><input id="date" type="date"><input id="category" placeholder="التصنيف">`;
+        else if(table === 'projects') fieldsHtml = `<input id="name" placeholder="اسم المشروع"><input id="location" placeholder="الموقع"><input id="startDate" type="date"><select id="status"><option>قيد التنفيذ</option><option>مكتمل</option></select>`;
+        else if(table === 'internal_units') fieldsHtml = `<input id="projectName" placeholder="المشروع"><input id="unitNumber" placeholder="رقم الوحدة"><input id="price" type="number" placeholder="السعر"><select id="status"><option>متاحة</option><option>مباعة</option></select>`;
+        else if(table === 'external_units') fieldsHtml = `<input id="address" placeholder="العنوان"><input id="rooms" placeholder="الغرف"><input id="price" type="number" placeholder="السعر"><select id="status"><option>متاحة</option><option>مباعة</option></select>`;
+        else if(table === 'marketers') fieldsHtml = `<input id="name" placeholder="الاسم"><input id="phone" placeholder="الهاتف"><input id="commission" type="number" placeholder="العمولة">`;
+
+        showModal(`إضافة إلى ${table}`, fieldsHtml, async (form) => {
+            let obj = {};
+            Array.from(form.elements).filter(e => e.id).forEach(e => obj[e.id] = e.value);
+            await cloudAction('insert', table, obj);
+        });
     }
 
     function showModal(title, html, onSub) {
         const m = document.createElement('div'); m.className = 'modal'; m.style.display = 'flex';
-        m.innerHTML = `<div class="modal-content"><h3>${title}</h3><form id="f">${html}<button type="submit" class="btn btn-primary" style="margin-top:10px">حفظ سحابي</button></form></div>`;
+        m.innerHTML = `<div class="modal-content"><h3>${title}</h3><form id="fm">${html}<div style="margin-top:15px"><button type="submit" class="btn btn-primary">حفظ سحابي</button></div></form></div>`;
         document.body.appendChild(m);
-        document.getElementById('f').onsubmit = (e) => { e.preventDefault(); onSub(e.target); m.remove(); };
+        document.getElementById('fm').onsubmit = (e) => { e.preventDefault(); onSub(e.target); m.remove(); };
         m.onclick = (e) => { if(e.target === m) m.remove(); };
     }
 
-    document.querySelectorAll('.nav-item').forEach(n => n.onclick = () => showPage(n.dataset.page));
-    window.onload = loadData;
+    function showPage(p) {
+        document.querySelectorAll('.page').forEach(pg => pg.classList.remove('active-page'));
+        document.getElementById(p + 'Page').classList.add('active-page');
+        document.querySelectorAll('.nav-item').forEach(ni => ni.classList.remove('active'));
+        document.querySelector(`[data-page="${p}"]`).classList.add('active');
+        renderPage(p);
+    }
+
+    document.querySelectorAll('.nav-item').forEach(ni => ni.onclick = () => showPage(ni.dataset.page));
+    window.onload = refreshData;
 </script>
 </body>
 </html>
